@@ -488,7 +488,7 @@ class RT_Client
     id = id.to_s
     id = $~[1] if id =~ /ticket\/(\d+)/
     resp = @site["ticket/#{id}/history?format=#{format[0,1]}"].get
-    resp = sterilize(resp)
+    resp = sterilize(resp.body)
 
     if format[0,1] == "s"
         h = resp.split("\n")
@@ -569,7 +569,7 @@ class RT_Client
     end
     reply = {}
     resp = @site["ticket/#{id}/history/id/#{history}"].get
-    resp = sterilize(resp)
+    resp = sterilize(resp.body)
     return reply if resp =~ /not related/ # history id must be related to the ticket id
     resp.gsub!(/RT\/\d+\.\d+\.\d+\s\d{3}\s.*\n\n/,"") # toss the HTTP response
     resp.gsub!(/^#.*?\n\n/,"") # toss the 'total" line
@@ -693,6 +693,7 @@ class RT_Client
     end
     tid = $~[1] if tid =~ /ticket\/(\d+)/
     resp = @site["ticket/#{tid}/attachments/#{aid}"].get
+    resp = resp.body
     resp.gsub!(/RT\/\d+\.\d+\.\d+\s\d{3}\s.*\n\n/,"") # toss HTTP response
     while resp.match(/CF\.\{[\w_ ]*[ ]+[\w ]*\}/) #replace CF spaces with underscores
       resp.gsub!(/CF\.\{([\w_ ]*)([ ]+)([\w ]*)\}/, 'CF.{\1_\3}')
@@ -781,7 +782,7 @@ class RT_Client
 
   # helper to convert responses from RT REST to a hash
   def response_to_h(resp) # :nodoc:
-    resp = resp.body.gsub(/RT\/\d+\.\d+\.\d+\s\d{3}\s.*\n\n/,"") # toss the HTTP response
+    resp = resp.to_s.gsub(/RT\/\d+\.\d+\.\d+\s\d{3}\s.*\n\n/,"") # toss the HTTP response
 
     # unfold folded fields
     # A newline followed by one or more spaces is treated as a
