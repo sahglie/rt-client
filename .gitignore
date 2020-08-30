@@ -48,5 +48,8 @@ build-iPhoneSimulator/
 # .ruby-version
 # .ruby-gemset
 
+# Editor help files
+.idea
+
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
