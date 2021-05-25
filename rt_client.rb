@@ -2,6 +2,7 @@
 
 require "rubygems"
 require "rest_client"
+require "cgi"
 if (RUBY_VERSION.to_f < 1.9)
   require 'iconv'
 end
@@ -380,7 +381,7 @@ class RT_Client
       order = params[:order] if params.has_key? :order
     end
     reply = []
-    resp = @site["search/ticket/?query=#{URI.escape(query)}&orderby=#{order}&format=s"].get
+    resp = @site["search/ticket/?query=#{CGI.escape(query)}&orderby=#{order}&format=s"].get
     raise "Invalid query (#{query})" if resp =~ /Invalid query/
     resp = resp.split("\n") # convert to array of lines
     resp.each do |line|
@@ -416,7 +417,7 @@ class RT_Client
       order = params[:order] if params.has_key? :order
     end
     replies = []
-    resp = @site["search/ticket/?query=#{URI.escape(query)}&orderby=#{order}&format=l"].get
+    resp = @site["search/ticket/?query=#{CGI.escape(query)}&orderby=#{order}&format=l"].get
     return replies if resp =~/No matching results./
     raise "Invalid query (#{query})" if resp =~ /Invalid query/
     resp.gsub!(/RT\/\d+\.\d+\.\d+\s\d{3}\s.*\n\n/,"") # strip HTTP response
